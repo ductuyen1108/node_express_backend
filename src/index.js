@@ -1,6 +1,8 @@
 import express from 'express';
 import route from './routers/index.js';
+import dotenv from 'dotenv';
 
+dotenv.config();
 // Express middleware
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -9,9 +11,9 @@ import morgan from 'morgan';
 import mongoose from 'mongoose';
 
 const app = express();
-const port = process.env.port || 5000;
+const PORT = process.env.PORT || 5000;
 
-const URI = 'mongodb://127.0.0.1:27017/Ea_sports_dev';
+const URI = process.env.DATABASE_URL;
 
 // Use middleware
 app.use(bodyParser.json({limit: '30mb'}));
@@ -28,8 +30,8 @@ route(app);
 mongoose.connect(URI)
   .then(() => {
      console.log('Connected to DB');
-     app.listen(port, () => {
-      console.log(`Server is running on port ${port}`)
+     app.listen(PORT, () => {
+      console.log(`Server is running on PORT ${PORT}`)
     });
   })
   .catch((err) => {
