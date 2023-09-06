@@ -10,6 +10,41 @@ export const getAccount = async (req, res) => {
     }
 };
 
+export const editAccount = async (req, res) => {
+    try {
+        const accountValue = req.params.id;
+        const account = await AccountModel.findById(accountValue);
+        res.status(200).json(account);
+    } catch (err) {
+        res.status(500).json({ error: err});
+    }
+};
+
+export const updateAccount = async (req, res) => {
+    try {
+        const updateAccount = req.body;
+
+        const account = await AccountModel.findOneAndUpdate({ _id: updateAccount._id }, updateAccount, { new: true });
+        res.status(200).json(account);
+    } catch (err) {
+        res.status(500).json({ error: err });
+    }
+};
+
+export const deleteAccount = async (req, res) => {
+    try {
+        const accountId = req.params.id;
+        const deleteAccount = await AccountModel.findByIdAndDelete(accountId);
+        if(!deleteAccount) {
+            res.status(404).json({error: "Account not found"});
+        } else {
+            res.status(200).json(deleteAccount);
+        }
+    } catch (err) {
+        res.status(500).json({ error: err });
+    }
+}
+
 export const register = async (req, res) => {
     const { email, password } = req.body;
   
@@ -20,9 +55,9 @@ export const register = async (req, res) => {
         }
     
         // Mã hóa mật khẩu trước khi lưu vào CSDL
-        const hashedPassword = await bcrypt.hash(password, 10);
+        // const hashedPassword = await bcrypt.hash(password, 10);
     
-        const account = new AccountModel({ email, password: hashedPassword, role: "user" });
+        const account = new AccountModel({ email, password/* : hashedPassword */, role: "user" });
         await account.save();
   
         res.status(201).json({ message: 'Account has been successfully registered' });
